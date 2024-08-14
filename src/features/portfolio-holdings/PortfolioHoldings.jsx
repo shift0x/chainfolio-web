@@ -1,74 +1,94 @@
-import { styled } from '@mui/material/styles';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import PropTypes from 'prop-types';
+import { Button, Stack, Typography } from '@mui/material';
+import StyledTable from '../../components/StyledTable';
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-        backgroundColor: theme.palette.common.black,
-        color: theme.palette.common.white,
-    },
-    [`&.${tableCellClasses.body}`]: {
-        fontSize: 14,
-    },
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    backgroundColor: "#fff",
-    '&:nth-of-type(odd)': {
-        backgroundColor: "#f9f9f9",
-    },
-    // hide last border
-    '&:last-child td, &:last-child th': {
-        border: 0,
-    },
-}));
-
-function createData(name, calories, fat, carbs, protein) {
-    return { name, calories, fat, carbs, protein };
+const actionButtonStyle = {
+    padding: "3px 10px"
 }
 
-const rows = [
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
+function PortfolioHoldings({ renderModal }){
 
-export default function PortfolioHoldings(){
+    function createHeading(name, id){
+        return { name, id }
+    }
+
+    function createRow(token){
+        return {
+            asset: ( 
+                <Stack direction="row" spacing={1}>
+                    <img src={token.img} height="25px" width="25px" />
+                    <Typography variant='body1'>{token.name}</Typography>
+                </Stack>
+            ),
+            symbol: (
+                <Typography variant='body1'>{token.symbol}</Typography>
+            ),
+            chain: (
+                <Stack direction="row" spacing={1}>
+                    <img src={token.chain.img} height="25px" width="25px" />
+                    <Typography variant='body1'>{token.chain.name}</Typography>
+                </Stack>
+            ),
+            balance: (
+                <Typography variant='body1'>{token.balance}</Typography>
+            ),
+            value: (
+                <Typography variant='body1'>{token.value}</Typography>
+            ),
+            actions: (
+                <Stack direction="row" spacing={1}>
+                    <Button variant='outlined' sx={actionButtonStyle} onClick={() => { renderModal("swap") }} >swap</Button>
+                    <Button variant='outlined' sx={actionButtonStyle} onClick={() => { renderModal("transfer") }}>transfer</Button>
+                    <Button variant='outlined' sx={actionButtonStyle} onClick={() => { renderModal("withdraw") }}>withdraw</Button>
+                </Stack>
+            )
+        }
+    }
+
+    const headings = [
+        createHeading("Asset", "asset"),
+        createHeading("Symbol", "symbol"),
+        createHeading("Chain", "chain"),
+        createHeading("Balance", "balance"),
+        createHeading("Value (USD)", "value"),
+        createHeading("Actions", "actions")
+    ]
+
+    const rows = [
+        { 
+            img: "https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694",
+            name: "Circle USDC",
+            symbol: "USDC",
+            balance: 20,
+            value: 20,
+            chain: {
+                img: "https://coin-images.coingecko.com/coins/images/16547/large/photo_2023-03-29_21.47.00.jpeg?1696516109",
+                name: "Arbitrum Sepolia"
+            }
+        },
+        { 
+            img: "https://assets.coingecko.com/coins/images/279/standard/ethereum.png",
+            name: "Wrapped Ether",
+            symbol: "WETH",
+            balance: 1,
+            value: 2700,
+            chain: {
+                img: "https://assets.coingecko.com/coins/images/279/standard/ethereum.png",
+                name: "Sepolia"
+            }
+        }
+    ].map(row => { return createRow(row) });
+
     return (
         <>
-            <TableContainer component={Paper} sx={{borderRadius: "0px"}}>
-                <Table sx={{ minWidth: 700 }} aria-label="customized table">
-                    <TableHead>
-                    <TableRow>
-                        <StyledTableCell>Dessert (100g serving)</StyledTableCell>
-                        <StyledTableCell align="right">Calories</StyledTableCell>
-                        <StyledTableCell align="right">Fat&nbsp;(g)</StyledTableCell>
-                        <StyledTableCell align="right">Carbs&nbsp;(g)</StyledTableCell>
-                        <StyledTableCell align="right">Protein&nbsp;(g)</StyledTableCell>
-                    </TableRow>
-                    </TableHead>
-                    <TableBody>
-                    {rows.map((row) => (
-                        <StyledTableRow key={row.name}>
-                        <StyledTableCell component="th" scope="row">
-                            {row.name}
-                        </StyledTableCell>
-                        <StyledTableCell align="right">{row.calories}</StyledTableCell>
-                        <StyledTableCell align="right">{row.fat}</StyledTableCell>
-                        <StyledTableCell align="right">{row.carbs}</StyledTableCell>
-                        <StyledTableCell align="right">{row.protein}</StyledTableCell>
-                        </StyledTableRow>
-                    ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <StyledTable headings={headings} rows={rows} />
         </>
     )
 }
+
+PortfolioHoldings.propTypes = {
+    renderModal: PropTypes.func.isRequired,
+};
+
+
+export default PortfolioHoldings

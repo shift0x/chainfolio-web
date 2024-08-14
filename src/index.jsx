@@ -30,7 +30,7 @@ const router = createBrowserRouter([
 
 root.render(
   <React.StrictMode>
-    <ThirdwebProvider activeChain="ethereum" clientId="10b979e90e7b1522923fc2edcec0b719">
+    <ThirdwebProvider activeChain="arbitrum-sepolia" clientId="10b979e90e7b1522923fc2edcec0b719">
       <RouterProvider router={router} />
     </ThirdwebProvider>
   </React.StrictMode>

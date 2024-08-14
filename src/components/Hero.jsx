@@ -30,7 +30,7 @@ export default function Hero() {
               alignItems: 'center',
               fontSize: '3.5rem',
               fontFamily: "Poppins",
-              fontWeight: 600
+              fontWeight: 600,
             }}
           >
             <span style={highlightedText}>&nbsp;Crosschain Defi&nbsp;</span>Simplified
@@ -41,7 +41,7 @@ export default function Hero() {
                 fontFamily: "Poppins",
                 textAlign: "center",
                 fontSize: "1.2em",
-                fontColor: "#666",
+                color: "#666",
                 lineHeight: 1.6
             }}
           >
