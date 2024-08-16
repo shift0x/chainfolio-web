@@ -1,3 +1,5 @@
+import { ethers } from "ethers";
+import { getRPC } from "./rpc";
 
 export async function sendTransaction(signer, to, data, value){
     const tx = { to }
@@ -13,4 +15,11 @@ export async function sendTransaction(signer, to, data, value){
     tx.gasLimit = estimatedGas.mul(2);
 
     return await signer.sendTransaction(tx);
+}
+
+export async function waitForTxReceipt(chainId, txHash) {
+    const rpc = getRPC(chainId);
+    const provider = new ethers.providers.JsonRpcProvider(rpc);
+
+    return provider.waitForTransaction(txHash);
 }

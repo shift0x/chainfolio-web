@@ -20,6 +20,27 @@ export async function callContract(rpc, abi, address, method, ...args){
     return result;
 }
 
+export async function callContractWithStateOverride(rpc, abi, address, method, stateOverride, ...args){
+    const provider = new providers.JsonRpcProvider(rpc);
+
+    const iface = new utils.Interface(abi);
+    const fragment = iface.getFunction(method);
+    const calldata = iface.encodeFunctionData(fragment, args);
+
+    const rawResult = await provider.send('eth_call', [
+        {
+            to: address,
+            data: calldata,
+        },
+        'latest',
+        stateOverride,
+    ]);
+
+    const result = iface.decodeFunctionResult(fragment, rawResult);
+
+    return result[0];
+}
+
 export async function estimateGas(rpc, abi, address, method, ...args) {
     const provider = new providers.JsonRpcProvider(rpc);
 
@@ -34,8 +55,6 @@ export async function estimateGas(rpc, abi, address, method, ...args) {
     const gasUsed = Number(utils.formatUnits(gasUsedBig, 0));
 
     const gasEstimate = gasPrice * gasUsed;
-
-    console.log({gasPrice, gasUsed, gasEstimate});   
 
     return gasEstimate;
 }

@@ -8,6 +8,8 @@ import CreateNewAccount from '../../features/create-account/CreateNewAccount';
 import SwapInitiator from '../../features/swap-action/SwapInitiator';
 import TransferInitiator from '../../features/transfer-action/TransferInitiator';
 import WithdrawInitiator from '../../features/withdraw-action/WithdrawInitiator';
+import DepositInitiator from '../../features/deposit-action/DepositInitiator';
+import { getNetworks } from '../../lib/networks/networks';
 
 const headings = [
     { id: "holdings", name: "Holdings" },
@@ -42,6 +44,8 @@ const requiredActionContainer = (content) => {
     )
 }
 
+const networks = getNetworks()
+
 export default function PortfolioPage(){
     const [ selectedHeading, setSelectedHeading] = useState("holdings")
     const [ userAccount, setUserAccount] = useState(null);
@@ -74,6 +78,10 @@ export default function PortfolioPage(){
         setIsModalActive(true)
     }
 
+    function closeModal(){
+        setIsModalActive(false)
+    }
+
     function getActiveModal(){
         switch(activeModalContent) {
             case "swap":
@@ -82,6 +90,8 @@ export default function PortfolioPage(){
                 return <TransferInitiator />
             case "withdraw":
                 return <WithdrawInitiator />
+            case "deposit":
+                return <DepositInitiator account={userAccount} fnClose={closeModal} />
             default:
                 return null;
         }
@@ -125,7 +135,7 @@ export default function PortfolioPage(){
                         flexGrow: 1,
                         textAlign: "right"
                     }}>
-                        <Button variant='text'>Deposit</Button>
+                        <Button variant='text' onClick={() => { renderModalContent("deposit") }}>Deposit</Button>
                     </Box>
                 
                 }
@@ -148,7 +158,7 @@ export default function PortfolioPage(){
                         }}>{activeModalContent}</Typography>
                     </DialogTitle>
 
-                    <Box sx={{ backgroundColor: "#fff" }}>
+                    <Box sx={{ backgroundColor: "#fff", padding: 2, minHeight: "300px", pb: 4 }}>
                         { getActiveModal() }
                     </Box>
                 </Box>

@@ -51,7 +51,7 @@ function PortfolioHoldings({ renderModal }){
         createHeading("Chain", "chain"),
         createHeading("Balance", "balance"),
         createHeading("Value (USD)", "value"),
-        createHeading("Actions", "actions")
+        createHeading("", "actions")
     ]
 
     const rows = [

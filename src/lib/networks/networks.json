@@ -1,0 +1,116 @@
+[
+    {
+        "name": "base sepolia",
+        "chainId": 84532,
+        "icon": "https://assets.coingecko.com/asset_platforms/images/131/small/base-network.png?1720533039",
+        "tokens": [
+            {
+                "symbol": "usdc",
+                "name": "USDC",
+                "decimals": 6,
+                "image": "https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694",
+                "address": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+            }
+        ],
+        "native": {
+            "symbol": "eth",
+            "decimals": 18,
+            "icon": "https://assets.coingecko.com/coins/images/279/standard/ethereum.png"
+        }
+    },
+    {
+        "name": "OP sepolia",
+        "chainId": 11155420,
+        "icon": "https://assets.coingecko.com/coins/images/25244/standard/Optimism.png?1696524385",
+        "tokens": [
+            {
+                "symbol": "usdc",
+                "name": "USDC",
+                "decimals": 6,
+                "image": "https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694",
+                "address": "0x5fd84259d66Cd46123540766Be93DFE6D43130D7"
+            }
+        ],
+        "native": {
+            "symbol": "eth",
+            "decimals": 18,
+            "icon": "https://assets.coingecko.com/coins/images/279/standard/ethereum.png"
+        }
+    },
+    {
+        "name": "avalanche fuji",
+        "chainId": 43113,
+        "icon": "https://assets.coingecko.com/coins/images/12559/standard/Avalanche_Circle_RedWhite_Trans.png?1696512369",
+        "tokens": [
+            {
+                "symbol": "usdc",
+                "name": "USDC",
+                "decimals": 6,
+                "image": "https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694",
+                "address": "0x5425890298aed601595a70ab815c96711a31bc65"
+            }
+        ],
+        "native": {
+            "symbol": "avax",
+            "decimals": 18,
+            "icon": "https://assets.coingecko.com/coins/images/12559/standard/Avalanche_Circle_RedWhite_Trans.png?1696512369"
+        }
+    },
+    {
+        "name": "sepolia",
+        "chainId": 11155111,
+        "icon": "https://assets.coingecko.com/coins/images/279/standard/ethereum.png",
+        "tokens": [
+            {
+                "symbol": "usdc",
+                "name": "USDC",
+                "decimals": 6,
+                "image": "https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694",
+                "address": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238"
+            }
+        ],
+        "native": {
+            "symbol": "eth",
+            "decimals": 18,
+            "icon": "https://assets.coingecko.com/coins/images/279/standard/ethereum.png"
+        }
+    },
+    {
+        "name": "polygon amoy",
+        "chainId": 80002,
+        "icon": "https://assets.coingecko.com/coins/images/4713/standard/polygon.png?1698233745",
+        "tokens": [
+            {
+                "symbol": "usdc",
+                "name": "USDC",
+                "decimals": 6,
+                "image": "https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694",
+                "address": "0x41e94eb019c0762f9bfcf9fb1e58725bfb0e7582"
+            }
+        ],
+        "native": {
+            "symbol": "MATIC",
+            "decimals": 18,
+            "icon": "https://assets.coingecko.com/coins/images/4713/standard/polygon.png?1698233745"
+        }
+    },
+    {
+        "name": "arbitrum sepolia",
+        "chainId": 421614,
+        "icon": "https://coin-images.coingecko.com/coins/images/16547/large/photo_2023-03-29_21.47.00.jpeg?1696516109",
+        "tokens": [
+            {
+                "symbol": "usdc",
+                "name": "USDC",
+                "decimals": 6,
+                "image": "https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694",
+                "address": "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d"
+            }
+        ],
+        "native": {
+            "symbol": "ETH",
+            "decimals": 18,
+            "icon": "https://assets.coingecko.com/coins/images/279/standard/ethereum.png"
+        }
+    }   
+]

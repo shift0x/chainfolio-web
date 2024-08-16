@@ -1,6 +1,6 @@
 import { getRPC } from "../chain/rpc"
 import { callContract, makeCalldata } from "../chain/contract"
-import accountManagerAbi from './abi.json'
+import accountManagerAbi from './contracts/accountManagerAbi.json'
 import { ethers } from "ethers"
 import { sendTransaction } from "../chain/transaction"
 
@@ -20,6 +20,8 @@ async function createAccount(signer, data){
 
     await sendTransaction(signer, accountManagerAddress, calldata);
 }
+
+
 
 function getChainId(){
     return chainId;
