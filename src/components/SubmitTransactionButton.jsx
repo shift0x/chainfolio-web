@@ -10,7 +10,7 @@ const TransactionStatus = {
     "AwaitingConfirmation": "Awaiting Confirmation"
 }
 
-function SubmitTransactionButton({chainId, disabled, label, onSubmitTransaction, callback, waitForConfirmation}){
+function SubmitTransactionButton({network, disabled, label, onSubmitTransaction, callback, waitForConfirmation}){
     const [ transactionStatus, setTransactionStatus ] = useState(TransactionStatus.NA);
     const [ pendingOperation, setPendingOperation ] = useState(false);
 
@@ -35,7 +35,7 @@ function SubmitTransactionButton({chainId, disabled, label, onSubmitTransaction,
     async function handleClick(){
         setTransactionStatus(TransactionStatus.AwaitingSignature)
         
-        await switchChain(chainId)
+        await switchChain(network.chainId)
 
         setPendingOperation(true);
     }

@@ -8,8 +8,7 @@ import CreateNewAccount from '../../features/create-account/CreateNewAccount';
 import SwapInitiator from '../../features/swap-action/SwapInitiator';
 import TransferInitiator from '../../features/transfer-action/TransferInitiator';
 import WithdrawInitiator from '../../features/withdraw-action/WithdrawInitiator';
-import DepositInitiator from '../../features/deposit-action/DepositInitiator';
-import { getNetworks } from '../../lib/networks/networks';
+import DepositAction from '../../features/deposit-action/DepositAction';
 
 const headings = [
     { id: "holdings", name: "Holdings" },
@@ -43,8 +42,6 @@ const requiredActionContainer = (content) => {
         </Box>
     )
 }
-
-const networks = getNetworks()
 
 export default function PortfolioPage(){
     const [ selectedHeading, setSelectedHeading] = useState("holdings")
@@ -91,7 +88,7 @@ export default function PortfolioPage(){
             case "withdraw":
                 return <WithdrawInitiator />
             case "deposit":
-                return <DepositInitiator account={userAccount} fnClose={closeModal} />
+                return <DepositAction account={userAccount} onClose={closeModal} />
             default:
                 return null;
         }
