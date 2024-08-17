@@ -33,7 +33,7 @@ export async function getAccountBalances(networks, account){
         network.tokens.forEach(token => {
             const decimals = numberFromBig(token.decimals, 0);
 
-            balancesByNetworkLookup[network.chainId.toString()][token.addr] = numberFromBig(token.balance, decimals)
+            balancesByNetworkLookup[network.chainId.toString()][token.addr.toLowerCase()] = numberFromBig(token.balance, decimals)
         })
     })
 

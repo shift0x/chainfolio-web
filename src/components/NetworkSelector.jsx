@@ -10,7 +10,7 @@ import { getNetworks } from '../lib/networks/networks';
 const networks = getNetworks()
 
 
-function NetworkSelector({onNetworkChanged}){
+function NetworkSelector({onNetworkChanged, ...props}){
     const [selectedNetworkIndex, setSelectedNetworkIndex] = useState(-1);
     const selectedNetwork = selectedNetworkIndex == -1 ? null : networks[selectedNetworkIndex];
     const currentChainId = useChainId();
@@ -31,7 +31,7 @@ function NetworkSelector({onNetworkChanged}){
     }, [selectedNetworkIndex])
 
     return (
-        <Box>
+        <Box {...props}>
 
             <StyledCaption>Network</StyledCaption>
 

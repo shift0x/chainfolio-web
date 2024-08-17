@@ -120,6 +120,11 @@
         "internalType": "bytes",
         "name": "updatedAccountData",
         "type": "bytes"
+      },
+      {
+        "internalType": "bool",
+        "name": "manageGas",
+        "type": "bool"
       }
     ],
     "name": "execute",
@@ -168,6 +173,24 @@
         "internalType": "struct Account",
         "name": "",
         "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getGasProvider",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",

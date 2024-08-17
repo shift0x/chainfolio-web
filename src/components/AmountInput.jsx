@@ -1,16 +1,8 @@
-import { StyledCaption } from "./StyledCaption"
-import { Box, Input, Stack } from "@mui/material"
+import { ErrorCaption, StyledCaption } from "./StyledCaption"
+import { Box, Skeleton, Stack } from "@mui/material"
 import { formatNumber } from "../lib/format"
 import { useEffect, useState } from "react"
-import { getAccountBalances } from "../lib/reader/address"
-import { useAddress } from "@thirdweb-dev/react"
-import { getNetworks } from "../lib/networks/networks"
-
-const inputErrorStyle = {
-    flexGrow: 1, 
-    textAlign: 'left',
-    color: "red"
-}
+import { StyledInput } from "./StyledInput"
 
 const accountBalanceStyle = {
     display: "flex",
@@ -28,49 +20,24 @@ const defaultContainerStyle = {
     marginTop: 2
 }
 
-const rightAlignedInputStyle = (error) => {
-    return {
-        width: "100%", 
-        '& .MuiInput-input': {
-            textAlign: "right"
-        },
-        borderBottom: error ? "1px solid red" : "border bottom 1px solid #000"
-    }
-} 
 
-const networks = getNetworks();
-
-export default function AmountInput({ asset, network, onAmountInChanged, containerSx = {}, inputSx = {} }){
+export default function AmountInput({ balances, asset, network, onAmountInChanged, containerSx = {}, inputSx = {} }){
     const [selectedAssetBalance, setSelectedAssetBalance] = useState(0);
     const [inputAmountIn, setInputAmountIn] = useState("");
     const [amountInError, setAmountInError] = useState(null);
-    const [accountBalances, setAccountBalances] = useState({});
-    const [accountBalancesRefreshCount, setAccountBalancesRefreshCount] = useState(0);
-
-    const connectedAccount = useAddress();
 
     function setAccountMaximumInput(){
-        if(!asset|| !network || !accountBalances[network.chainId]) {
+        if(!asset|| !network || !balances[network.chainId]) {
             setSelectedAssetBalance("");
 
             return;
         } 
 
-        const balance = accountBalances[network.chainId][asset.address];
-        
-        setSelectedAssetBalance(balance ?? "");
+        const balance = balances[network.chainId][asset.address.toLowerCase()];
+
+        setSelectedAssetBalance(balance == null ? "" : balance);
     }
 
-    useEffect(() => {
-        const updateBalances = async () => {
-            const balances = await getAccountBalances(networks, connectedAccount);
-
-            setAccountBalances(balances);
-            setAccountMaximumInput();
-        }
-
-        updateBalances();
-    }, [accountBalancesRefreshCount])
 
     useEffect(() => {
         setAccountMaximumInput();
@@ -106,32 +73,41 @@ export default function AmountInput({ asset, network, onAmountInChanged, contain
         }}>
             <StyledCaption>Amount</StyledCaption>
 
-            <Input type="text" 
-                sx={{
-                    ...rightAlignedInputStyle(amountInError != null),
-                    ...inputSx
-                }} 
-                value={inputAmountIn}
-                onChange={ (e) => setAmount(e.target.value) }  />
+            <StyledInput error={amountInError != null} 
+                sx={inputSx} 
+                value={inputAmountIn} 
+                onChange={ (e) => setAmount(e.target.value) } />
+
 
             <Stack direction="row" sx={{ 
                 justifyContent: 'flex-end',
                 alignItems: 'center'
             }}>
-                <StyledCaption 
-                    sx={inputErrorStyle}>
-                        {amountInError}
-                </StyledCaption>
-                
+                <ErrorCaption sx={{ flexGrow: 1, textAlign: 'left'}} error={amountInError} />
+
                 <StyledCaption 
                     sx={accountBalanceStyle}>
-                        Balance:&nbsp;{ formatNumber(selectedAssetBalance) }
+                        {
+                            selectedAssetBalance.toString() == "" ? 
+                                <Skeleton width={100} /> :
+                                <>
+                                    Balance:&nbsp;{ formatNumber(selectedAssetBalance) }
+                                </>
+                        }
+                        
                 </StyledCaption>
                 
                 <StyledCaption 
                     sx={maxAmountInStyle} 
                     onClick={ () => { setAmount(selectedAssetBalance)}}>
-                        &nbsp;(max)
+                        {
+                            selectedAssetBalance.toString() == "" ?
+                                <Skeleton width={20} /> :
+                                <>
+                                    &nbsp;(max)
+                                </>
+                        }
+                        
                 </StyledCaption>
             </Stack>
         </Box>

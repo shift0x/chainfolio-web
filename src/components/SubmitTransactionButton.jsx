@@ -10,7 +10,7 @@ const TransactionStatus = {
     "AwaitingConfirmation": "Awaiting Confirmation"
 }
 
-function SubmitTransactionButton({network, disabled, label, onSubmitTransaction, callback, waitForConfirmation}){
+function SubmitTransactionButton({network, disabled, label, onSubmitTransaction, callback, waitForConfirmation, sx={}, ...props}){
     const [ transactionStatus, setTransactionStatus ] = useState(TransactionStatus.NA);
     const [ pendingOperation, setPendingOperation ] = useState(false);
 
@@ -62,8 +62,13 @@ function SubmitTransactionButton({network, disabled, label, onSubmitTransaction,
         <Button variant="contained" 
             onClick={handleClick}
             disabled={!active} 
-            sx={{width: "100%"}} 
-            color={ active ? "primary" : "info"}>
+            sx={{
+                width: "100%",
+                ...sx
+            }} 
+            color={ active ? "primary" : "info"} 
+            {...props}
+        >
                 {getButtonContent()}
             </Button>
     )

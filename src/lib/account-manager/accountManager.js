@@ -5,7 +5,7 @@ import { ethers } from "ethers"
 import { sendTransaction } from "../chain/transaction"
 
 const chainId = 421614
-const accountManagerAddress = "0xBF90F0C5D30d2DebbC940369DA435687E4C2e701"
+const accountManagerAddress = "0x861C552fFDD44c0953cc07F672d4c7CC7CdFF68a"
 
 async function getAccount(address){
     const rpc = getRPC(chainId);
@@ -18,7 +18,9 @@ async function createAccount(signer, data){
     const args = ethers.utils.defaultAbiCoder.encode(["string"], [JSON.stringify(data)]);
     const calldata = makeCalldata(accountManagerAbi, "createAccount", args);
 
-    await sendTransaction(signer, accountManagerAddress, calldata);
+    const tx = await sendTransaction(signer, accountManagerAddress, calldata);
+
+    return tx.wait();
 }
 
 

@@ -1,5 +1,5 @@
-import { Box, Button } from "@mui/material";
-import { useState } from "react";
+import { Box, Button, Stack } from "@mui/material";
+import { useContext, useState } from "react";
 import PropTypes from 'prop-types';
 import SubmitTransactionButton from "../../components/SubmitTransactionButton";
 import { depositERC20 } from "./deposit";
@@ -8,11 +8,14 @@ import NetworkSelector from "../../components/NetworkSelector";
 import ReadonlyInput from "../../components/ReadonlyInput";
 import AssetSelector from '../../components/AssetSelector';
 import AmountInput from "../../components/AmountInput";
+import ConnectedAddressContext from "../../context/ConnectedAddressContext";
+import UserAccountContext from "../../context/UserAccountContext";
 
-function DepositAction({ account, onClose }){
+function DepositAction({ account, onActionCompleted }){
     const [selectedNetwork, setSelectedNetwork] = useState(null);
     const [selectedAsset, setSelectedAsset] = useState(null);
     const [amountIn, setAmountIn] = useState(0);
+    const { connectedAddressBalances  } = useContext(ConnectedAddressContext)
 
     const canSubmit = selectedNetwork != null && selectedAsset != null && amountIn != null;
 
@@ -22,48 +25,45 @@ function DepositAction({ account, onClose }){
         return depositERC20(signer, account.eoa, selectedAsset.address, amount);
     }
 
-    function onSubmitTransactionCallback(){
-        onClose();
-    }
-    
     return (
         <>
-            <NetworkSelector 
-                onNetworkChanged={setSelectedNetwork} />
+            <Stack direction="row" spacing={1}>
+                <NetworkSelector 
+                    onNetworkChanged={setSelectedNetwork} 
+                    sx={{flex: 1}} />
+
+                <AssetSelector 
+                    sx={{flex: 1}}
+                    network={selectedNetwork} 
+                    onSelectedAssetChanged={setSelectedAsset} />
+            </Stack>
             
             <ReadonlyInput 
                 content={account.eoa} 
                 label="To (Managed Wallet)" />
 
-            <AssetSelector 
-                network={selectedNetwork} 
-                onSelectedAssetChanged={setSelectedAsset} />
-
             <AmountInput
+                balances={connectedAddressBalances}
                 asset={selectedAsset}
                 network={selectedNetwork}
                 onAmountInChanged={setAmountIn} />
 
 
-            <Box sx={{marginTop: 6}}>
-
-                <SubmitTransactionButton 
-                    network={selectedNetwork}
-                    disabled={!canSubmit} 
-                    label="Deposit Assets" 
-                    onSubmitTransaction={submitTransaction} 
-                    callback={onSubmitTransactionCallback}
-                    waitForConfirmation={true} />
-
-                <Button variant="outlined" sx={{width: "100%", marginTop: 2}} onClick={onClose}>Cancel</Button>
-            </Box>
+            <SubmitTransactionButton 
+                network={selectedNetwork}
+                disabled={!canSubmit} 
+                label="Deposit Assets" 
+                onSubmitTransaction={submitTransaction} 
+                callback={onActionCompleted}
+                sx={{marginTop: 6}}
+                waitForConfirmation={true} />
         </>
     )
 }
 
 DepositAction.propTypes = {
-    onClose: PropTypes.PropTypes.func.isRequired,
-    account: PropTypes.PropTypes.object.isRequired,
+    account: PropTypes.object.isRequired,
+    onActionCompleted: PropTypes.func.isRequired
 };
 
 export default DepositAction

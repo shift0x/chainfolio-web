@@ -1,14 +1,15 @@
 import { Box, Button, Grid, Dialog, Typography, DialogTitle } from '@mui/material';
-import { useMemo, useState } from 'react';
+import { useContext, useState } from 'react';
 import PortfolioHoldings from '../../features/portfolio-holdings/PortfolioHoldings';
-import { useAddress, useConnectionStatus } from '@thirdweb-dev/react';
+import { useConnectionStatus } from '@thirdweb-dev/react';
 import Web3WalletConnection from '../../features/web3-wallet-connection/Web3WalletConnection';
-import { useAccountManager } from '../../lib/account-manager/accountManager';
 import CreateNewAccount from '../../features/create-account/CreateNewAccount';
 import SwapInitiator from '../../features/swap-action/SwapInitiator';
-import TransferInitiator from '../../features/transfer-action/TransferInitiator';
-import WithdrawInitiator from '../../features/withdraw-action/WithdrawInitiator';
+import TransferAction from '../../features/transfer-action/TransferAction';
+import WithdrawAction from '../../features/withdraw-action/WithdrawAction';
 import DepositAction from '../../features/deposit-action/DepositAction';
+import UserAccountContext from '../../context/UserAccountContext';
+import ConnectedAddressContext from '../../context/ConnectedAddressContext';
 
 const headings = [
     { id: "holdings", name: "Holdings" },
@@ -45,34 +46,24 @@ const requiredActionContainer = (content) => {
 
 export default function PortfolioPage(){
     const [ selectedHeading, setSelectedHeading] = useState("holdings")
-    const [ userAccount, setUserAccount] = useState(null);
     const [ isModalActive, setIsModalActive] = useState(false);
     const [ activeModalContent, setActiveModalContent] = useState(null);
+    const { userAccount, updateUserAccount } = useContext(UserAccountContext)
+    const { updateConnectedAddressBalances } = useContext(ConnectedAddressContext)
+
     
     const connectionStatus = useConnectionStatus();
-    const accountManager = useAccountManager();
-    const connectedAddress = useAddress();
-
-    useMemo(() => {
-        if (!connectedAddress){
-            setUserAccount(null);
-
-            return
-        }
-
-        const updateUserAccount = async () => {
-            const account = await accountManager.getAccount(connectedAddress);
-
-            setUserAccount(account);
-        }
-
-        updateUserAccount();
-
-    }, [connectedAddress])
 
     function renderModalContent(content){
         setActiveModalContent(content);
         setIsModalActive(true)
+    }
+
+    async function updateBalancesAndClose(){
+        await updateConnectedAddressBalances();
+        await updateUserAccount();
+
+        closeModal()
     }
 
     function closeModal(){
@@ -84,11 +75,11 @@ export default function PortfolioPage(){
             case "swap":
                 return <SwapInitiator />
             case "transfer":
-                return <TransferInitiator />
+                return <TransferAction account={userAccount} onActionCompleted={closeModal} />
             case "withdraw":
-                return <WithdrawInitiator />
+                return <WithdrawAction account={userAccount} onActionCompleted={closeModal} />
             case "deposit":
-                return <DepositAction account={userAccount} onClose={closeModal} />
+                return <DepositAction account={userAccount} onActionCompleted={updateBalancesAndClose} />
             default:
                 return null;
         }
@@ -157,6 +148,8 @@ export default function PortfolioPage(){
 
                     <Box sx={{ backgroundColor: "#fff", padding: 2, minHeight: "300px", pb: 4 }}>
                         { getActiveModal() }
+
+                        <Button variant="outlined" sx={{width: "100%", marginTop: 2}} onClick={closeModal}>Cancel</Button>
                     </Box>
                 </Box>
             </Dialog>
