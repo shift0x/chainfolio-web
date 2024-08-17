@@ -8,14 +8,13 @@ import NetworkSelector from "../../components/NetworkSelector";
 import ReadonlyInput from "../../components/ReadonlyInput";
 import AssetSelector from '../../components/AssetSelector';
 import AmountInput from "../../components/AmountInput";
-import ConnectedAddressContext from "../../context/ConnectedAddressContext";
-import UserAccountContext from "../../context/UserAccountContext";
+import { useConnectedAddress } from "../../providers/ConnectedAddressProvider";
 
 function DepositAction({ account, onActionCompleted }){
     const [selectedNetwork, setSelectedNetwork] = useState(null);
     const [selectedAsset, setSelectedAsset] = useState(null);
     const [amountIn, setAmountIn] = useState(0);
-    const { connectedAddressBalances  } = useContext(ConnectedAddressContext)
+    const { connectedAddressBalances  } = useConnectedAddress();
 
     const canSubmit = selectedNetwork != null && selectedAsset != null && amountIn != null;
 

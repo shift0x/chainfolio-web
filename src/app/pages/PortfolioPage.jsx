@@ -1,5 +1,5 @@
 import { Box, Button, Grid, Dialog, Typography, DialogTitle } from '@mui/material';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import PortfolioHoldings from '../../features/portfolio-holdings/PortfolioHoldings';
 import { useConnectionStatus } from '@thirdweb-dev/react';
 import Web3WalletConnection from '../../features/web3-wallet-connection/Web3WalletConnection';
@@ -8,8 +8,11 @@ import SwapInitiator from '../../features/swap-action/SwapInitiator';
 import TransferAction from '../../features/transfer-action/TransferAction';
 import WithdrawAction from '../../features/withdraw-action/WithdrawAction';
 import DepositAction from '../../features/deposit-action/DepositAction';
-import UserAccountContext from '../../context/UserAccountContext';
-import ConnectedAddressContext from '../../context/ConnectedAddressContext';
+import { useUserAccount } from '../../providers/UserAccountProvider';
+import { useConnectedAddress } from '../../providers/ConnectedAddressProvider';
+import TransactionsActionButton from '../../features/transaction-bundler/TransactionsActionButton';
+import DepositActionButton from '../../components/DepositActionButton';
+import SubmitTransactionsAction from '../../features/transaction-bundler/SubmitTransactionsAction';
 
 const headings = [
     { id: "holdings", name: "Holdings" },
@@ -48,8 +51,8 @@ export default function PortfolioPage(){
     const [ selectedHeading, setSelectedHeading] = useState("holdings")
     const [ isModalActive, setIsModalActive] = useState(false);
     const [ activeModalContent, setActiveModalContent] = useState(null);
-    const { userAccount, updateUserAccount } = useContext(UserAccountContext)
-    const { updateConnectedAddressBalances } = useContext(ConnectedAddressContext)
+    const { userAccount, updateUserAccount } = useUserAccount()
+    const { updateConnectedAddressBalances } = useConnectedAddress()
 
     
     const connectionStatus = useConnectionStatus();
@@ -80,6 +83,8 @@ export default function PortfolioPage(){
                 return <WithdrawAction account={userAccount} onActionCompleted={closeModal} />
             case "deposit":
                 return <DepositAction account={userAccount} onActionCompleted={updateBalancesAndClose} />
+            case "transactions":
+                return <SubmitTransactionsAction onActionCompleted={updateBalancesAndClose} />
             default:
                 return null;
         }
@@ -123,7 +128,13 @@ export default function PortfolioPage(){
                         flexGrow: 1,
                         textAlign: "right"
                     }}>
-                        <Button variant='text' onClick={() => { renderModalContent("deposit") }}>Deposit</Button>
+                        <DepositActionButton 
+                            onClick={() => { renderModalContent("deposit") }}
+                            sx={{mr: 2 }} />
+
+                        <TransactionsActionButton
+                            onClick={() => { renderModalContent("transactions") }}
+                        />
                     </Box>
                 
                 }
@@ -149,7 +160,7 @@ export default function PortfolioPage(){
                     <Box sx={{ backgroundColor: "#fff", padding: 2, minHeight: "300px", pb: 4 }}>
                         { getActiveModal() }
 
-                        <Button variant="outlined" sx={{width: "100%", marginTop: 2}} onClick={closeModal}>Cancel</Button>
+                        <Button variant="outlined" sx={{width: "100%", marginTop: 2}} onClick={closeModal}>Close</Button>
                     </Box>
                 </Box>
             </Dialog>

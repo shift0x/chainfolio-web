@@ -7,13 +7,13 @@ import AmountInput from "../../components/AmountInput";
 import NetworkSelector from "../../components/NetworkSelector";
 import { useAddress } from "@thirdweb-dev/react";
 import { EnqueueTransactionButton } from "../../components/ActionButton";
-import UserAccountContext from "../../context/UserAccountContext";
+import { useUserAccount } from "../../providers/UserAccountProvider";
 
 export default function WithdrawAction({ account, onActionCompleted }){
     const [selectedNetwork, setSelectedNetwork] = useState(null);
     const [selectedAsset, setSelectedAsset] = useState(null);
     const [amountIn, setAmountIn] = useState(0);
-    const { userAccountBalances } = useContext(UserAccountContext)
+    const { userAccountBalances } = useUserAccount();
 
     const connectedAddress = useAddress();
     const canSubmit = selectedNetwork != null && selectedAsset != null && amountIn != null && connectedAddress != null;

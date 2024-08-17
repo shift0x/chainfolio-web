@@ -1,13 +1,12 @@
 import { Button, Box, Typography } from "@mui/material";
 import { useAccountManager } from "../../lib/account-manager/accountManager";
 import { useSigner } from "@thirdweb-dev/react";
-import { useContext } from "react";
-import UserAccountContext from "../../context/UserAccountContext";
+import { useUserAccount } from "../../providers/UserAccountProvider";
 
 export default function CreateNewAccount(){
     const accountManager = useAccountManager();
     const signer = useSigner();
-    const { updateUserAccount } = useContext(UserAccountContext);
+    const { updateUserAccount } = useUserAccount();
 
     async function createAccount(){
         await accountManager.createAccount(signer, {});

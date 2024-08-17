@@ -7,21 +7,28 @@ import AmountInput from "../../components/AmountInput";
 import NetworkSelector from "../../components/NetworkSelector";
 import EvmAddressInput from "../../components/EvmAddressInput";
 import { EnqueueTransactionButton } from "../../components/ActionButton";
-import UserAccountContext from "../../context/UserAccountContext";
+import { useUserAccount } from "../../providers/UserAccountProvider";
+import { transferERC20Token } from "../../lib/erc20/erc20";
 
 export default function TransferAction({ account, onNewTransaction, onActionCompleted }){
     const [selectedNetwork, setSelectedNetwork] = useState(null);
     const [selectedAsset, setSelectedAsset] = useState(null);
     const [destinationAddress, setDestinationAddress] = useState(null);
     const [amountIn, setAmountIn] = useState(0);
-    const { userAccountBalances } = useContext(UserAccountContext)
-
+    const { userAccountBalances } = useUserAccount();
+    
     const canSubmit = selectedNetwork != null && selectedAsset != null && amountIn != null && destinationAddress != null;
 
     async function makeTransaction(){
-        const amount = numberToBig(Number(amountIn), selectedAsset.decimals);
+        const calldata = await transferERC20Token(selectedAsset.address, numberToBig(amountIn, selectedAsset.decimals));
 
-        return
+        return {
+            to: destinationAddress,
+            data: calldata,
+            gasLimit: 100000,
+            value: 0,
+            chainId: selectedNetwork.chainId.toString()
+        }
     }
 
     return (
