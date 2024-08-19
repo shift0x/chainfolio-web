@@ -3,6 +3,7 @@
         "name": "base sepolia",
         "chainId": 84532,
         "icon": "https://assets.coingecko.com/asset_platforms/images/131/small/base-network.png?1720533039",
+        "explorer": "https://sepolia.basescan.org",
         "tokens": [
             {
                 "symbol": "usdc",
@@ -22,6 +23,7 @@
         "name": "OP sepolia",
         "chainId": 11155420,
         "icon": "https://assets.coingecko.com/coins/images/25244/standard/Optimism.png?1696524385",
+        "explorer": "https://sepolia-optimism.etherscan.io",
         "tokens": [
             {
                 "symbol": "usdc",
@@ -41,6 +43,7 @@
         "name": "avalanche fuji",
         "chainId": 43113,
         "icon": "https://assets.coingecko.com/coins/images/12559/standard/Avalanche_Circle_RedWhite_Trans.png?1696512369",
+        "explorer": "https://testnet.snowtrace.io",
         "tokens": [
             {
                 "symbol": "usdc",
@@ -60,13 +63,59 @@
         "name": "sepolia",
         "chainId": 11155111,
         "icon": "https://assets.coingecko.com/coins/images/279/standard/ethereum.png",
+        "explorer": "https://sepolia.etherscan.io",
         "tokens": [
             {
-                "symbol": "usdc",
+                "address": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
                 "name": "USDC",
+                "symbol": "USDC",
                 "decimals": 6,
-                "image": "https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694",
-                "address": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238"
+                "image": "https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694"
+            },
+            {
+                "address": "0xfff9976782d46cc05630d1f6ebab18b2324d6b14",
+                "name": "Wrapped Ether",
+                "symbol": "WETH",
+                "decimals": 18,
+                "image": "https://assets.coingecko.com/coins/images/279/standard/ethereum.png"
+            },
+            {
+                "address": "0x779877a7b0d9e8603169ddbd7836e478b4624789",
+                "name": "ChainLink",
+                "symbol": "LINK",
+                "decimals": 18,
+                "image": "https://assets.coingecko.com/coins/images/877/standard/chainlink-new-logo.png?1696502009"
+            },
+            {
+                "address": "0xb1c3cb9b5e598d4e95a85870e7812b99f350982d",
+                "name": "Avail",
+                "symbol": "AVAIL",
+                "decimals": 18,
+                "image": "https://assets.coingecko.com/coins/images/37372/standard/avail-logo.png?1714145201"
+            },
+            {
+                "address": "0xff34b3d4aee8ddcd6f9afffb6fe49bd371b8a357",
+                "name": "DAI",
+                "symbol": "DAI",
+                "decimals": 18,
+                "image": "https://assets.coingecko.com/coins/images/9956/standard/Badge_Dai.png?1696509996"
+            },
+            {
+                "address": "0x08210f9170f89ab7658f0b5e3ff39b0e03c594d4",
+                "name": "EURC",
+                "symbol": "EURC",
+                "decimals": 6,
+                "image": "https://assets.coingecko.com/coins/images/26045/standard/euro.png?1696525125"
+            }
+        ],
+        "exchanges": [
+            {
+                "type": "uniswap-v3",
+                "params": {
+                    "router": "0x3bFA4769FB09eefC5a80d6E87c3B9C650f7Ae48E",
+                    "factory": "0x0227628f3F023bb0B980b67D528571c95c6DaC1c",
+                    "positionManager": "0x1238536071E1c677A632429e3655c799b22cDA52"
+                }
             }
         ],
         "native": {
@@ -79,6 +128,7 @@
         "name": "polygon amoy",
         "chainId": 80002,
         "icon": "https://assets.coingecko.com/coins/images/4713/standard/polygon.png?1698233745",
+        "explorer": "https://amoy.polygonscan.com",
         "tokens": [
             {
                 "symbol": "usdc",
@@ -97,7 +147,9 @@
     {
         "name": "arbitrum sepolia",
         "chainId": 421614,
+        "default": true,
         "icon": "https://coin-images.coingecko.com/coins/images/16547/large/photo_2023-03-29_21.47.00.jpeg?1696516109",
+        "explorer": "https://sepolia.arbiscan.io",
         "tokens": [
             {
                 "symbol": "usdc",

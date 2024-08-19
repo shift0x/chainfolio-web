@@ -1,6 +1,7 @@
 import { Badge } from '@mui/material';
 import { StyledFab } from '../../components/StyledFab';
 import { useTransactionQueue } from '../../providers/TransactionQueueProvider';
+import SendIcon from '@mui/icons-material/Send';
 
 const defaultFloatingActionButtonStyle = {
     backgroundColor: "#f2f2f2",
@@ -25,7 +26,10 @@ export default function TransactionsActionButton({variant="extended", size="medi
                     ...defaultFloatingActionButtonStyle,
                     ...sx
                 }} {...props}>
-                Transactions
+                    <SendIcon sx={{
+                        transform: 'rotate(-45deg)',
+                        fontSize: '17px'
+                    }} /> Transactions
             </StyledFab>
         </Badge>
     )

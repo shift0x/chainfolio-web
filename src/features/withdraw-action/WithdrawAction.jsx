@@ -1,27 +1,38 @@
 import { Stack } from "@mui/material";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { numberToBig } from "../../lib/chain/numbers";
 import ReadonlyInput from "../../components/ReadonlyInput";
 import AssetSelector from "../../components/AssetSelector";
 import AmountInput from "../../components/AmountInput";
 import NetworkSelector from "../../components/NetworkSelector";
-import { useAddress } from "@thirdweb-dev/react";
-import { EnqueueTransactionButton } from "../../components/ActionButton";
+import { EnqueueTransactionButton } from "../transaction-bundler/EnqueueTransactionButton";
 import { useUserAccount } from "../../providers/UserAccountProvider";
+import { transferERC20Token } from "../../lib/erc20/erc20";
+import { useConnectedAddress } from "../../providers/ConnectedAddressProvider";
 
 export default function WithdrawAction({ account, onActionCompleted }){
     const [selectedNetwork, setSelectedNetwork] = useState(null);
     const [selectedAsset, setSelectedAsset] = useState(null);
     const [amountIn, setAmountIn] = useState(0);
     const { userAccountBalances } = useUserAccount();
+    const { connectedAddress } = useConnectedAddress();
 
-    const connectedAddress = useAddress();
     const canSubmit = selectedNetwork != null && selectedAsset != null && amountIn != null && connectedAddress != null;
 
     async function makeTransaction(){
-        const amount = numberToBig(Number(amountIn), selectedAsset.decimals);
+        const calldata = await transferERC20Token(connectedAddress, numberToBig(amountIn, selectedAsset.decimals));
 
-        return
+        return {
+            label: `withdraw ${amountIn} ${selectedAsset.symbol.toUpperCase()}`,
+            network: selectedNetwork,
+            params: {
+                to: selectedAsset.address,
+                data: calldata,
+                gasLimit: 100000,
+                value: 0,
+                chainId: selectedNetwork.chainId.toString()
+            }
+        }
     }
 
     return (
@@ -33,6 +44,7 @@ export default function WithdrawAction({ account, onActionCompleted }){
 
                 <AssetSelector 
                     sx={{flex: 1}}
+                    selectSx={{marginTop: "0px"}}
                     network={selectedNetwork} 
                     onSelectedAssetChanged={setSelectedAsset} />
             </Stack>
@@ -42,17 +54,18 @@ export default function WithdrawAction({ account, onActionCompleted }){
                 label="From (Managed Wallet)" />
 
             <ReadonlyInput 
+                containerSx={{marginTop: 6}}
                 content={connectedAddress} 
                 label="To (Owner)" />
 
             <AmountInput
+                containerSx={{marginTop: 6}}
                 balances={userAccountBalances}
                 asset={selectedAsset}
                 network={selectedNetwork}
                 onAmountInChanged={setAmountIn} />
 
             <EnqueueTransactionButton
-                sx={{marginTop: 6}}
                 onAction={makeTransaction} 
                 onActionCompleted={onActionCompleted}
                 active={canSubmit}

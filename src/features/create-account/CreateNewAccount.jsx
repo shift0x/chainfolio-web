@@ -2,14 +2,16 @@ import { Button, Box, Typography } from "@mui/material";
 import { useAccountManager } from "../../lib/account-manager/accountManager";
 import { useSigner } from "@thirdweb-dev/react";
 import { useUserAccount } from "../../providers/UserAccountProvider";
+import { useConnectedAddress } from "../../providers/ConnectedAddressProvider";
 
 export default function CreateNewAccount(){
     const accountManager = useAccountManager();
     const signer = useSigner();
     const { updateUserAccount } = useUserAccount();
+    const { connectedAddress } = useConnectedAddress();
 
     async function createAccount(){
-        await accountManager.createAccount(signer, {});
+        await accountManager.createAccount(signer, connectedAddress, {});
         await updateUserAccount();
     }
 

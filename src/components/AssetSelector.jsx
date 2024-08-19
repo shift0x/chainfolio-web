@@ -8,7 +8,7 @@ const defaultContainerStyle = {
     marginTop: 2
 }
 
-export default function AssetSelector({ network, onSelectedAssetChanged, sx = {} }){
+export default function AssetSelector({ caption="Asset", network, onSelectedAssetChanged, sx = {}, selectSx={} }){
     const [selectedAssetIndex, setSelectedAssetIndex] = useState(0);
 
     useEffect(() => {
@@ -34,8 +34,8 @@ export default function AssetSelector({ network, onSelectedAssetChanged, sx = {}
             ...defaultContainerStyle,
             ...sx
         }}>
-            <StyledCaption>Asset</StyledCaption>
-            <StyledSelect
+            <StyledCaption>{caption}</StyledCaption>
+            <StyledSelect sx={{mt: "3px", ...selectSx}}
                 value={selectedAssetIndex} 
                 onChange={(e) => { setSelectedAssetIndex(e.target.value) }}>
 

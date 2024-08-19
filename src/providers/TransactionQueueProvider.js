@@ -1,4 +1,5 @@
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useEffect, useState } from "react"
+import { useConnectedAddress } from "./ConnectedAddressProvider";
 
 export const TransactionStatus = {
     Queued: "queued",
@@ -17,15 +18,31 @@ export const useTransactionQueue = () => {
 
 export const TransactionQueueProvider = ({children}) => {
     const [queuedTransactions, setQueuedTransactions] = useState([]);
+    const { connectedAddress } = useConnectedAddress()
+
+    useEffect(() => {
+        setQueuedTransactions([])
+    }, [connectedAddress])
 
     const addQueuedTransaction = (args) => {
-        const tx = {
-        id: queuedTransactions.length,
-        status: TransactionStatus.Queued,
-        args: args
+        let txs = [];
+
+        if(!Array.isArray(args)) {
+            txs.push(args);
+        } else {
+            txs = args;
         }
 
-        setQueuedTransactions(prev => [...prev, tx])
+        const models = txs.map(tx => {
+            return {
+                id: queuedTransactions.length,
+                status: TransactionStatus.Queued,
+                ...tx
+            }
+        })
+
+
+        setQueuedTransactions(prev => [...prev, ...models])
     }
 
     const removeQueuedTransaction = (tx) => {
@@ -36,10 +53,15 @@ export const TransactionQueueProvider = ({children}) => {
         })
     }
 
+    const clearTransactionQueue = () => {
+        setQueuedTransactions([]);
+    }
+
     const value = {
         queuedTransactions,
         addQueuedTransaction,
-        removeQueuedTransaction
+        removeQueuedTransaction,
+        clearTransactionQueue
     }
 
     return (

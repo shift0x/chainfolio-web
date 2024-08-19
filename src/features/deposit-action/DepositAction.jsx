@@ -33,6 +33,7 @@ function DepositAction({ account, onActionCompleted }){
 
                 <AssetSelector 
                     sx={{flex: 1}}
+                    selectSx={{marginTop: "0px"}}
                     network={selectedNetwork} 
                     onSelectedAssetChanged={setSelectedAsset} />
             </Stack>
@@ -42,6 +43,7 @@ function DepositAction({ account, onActionCompleted }){
                 label="To (Managed Wallet)" />
 
             <AmountInput
+                containerSx={{marginTop: 6}}
                 balances={connectedAddressBalances}
                 asset={selectedAsset}
                 network={selectedNetwork}
@@ -52,17 +54,13 @@ function DepositAction({ account, onActionCompleted }){
                 network={selectedNetwork}
                 disabled={!canSubmit} 
                 label="Deposit Assets" 
+                showDivider={false}
                 onSubmitTransaction={submitTransaction} 
                 callback={onActionCompleted}
-                sx={{marginTop: 6}}
                 waitForConfirmation={true} />
         </>
     )
 }
 
-DepositAction.propTypes = {
-    account: PropTypes.object.isRequired,
-    onActionCompleted: PropTypes.func.isRequired
-};
 
 export default DepositAction

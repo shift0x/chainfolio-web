@@ -11,6 +11,13 @@ export async function getGasPrice(chainId) {
     return provider.getGasPrice()
 }
 
+export async function getNonce(chainId, address) {
+    const rpc = getRPC(chainId);
+    const provider = new ethers.providers.JsonRpcProvider(rpc);
+
+    return provider.getTransactionCount(address)
+}
+
 export async function estimateGasCost(chainId, gasUsed) {
     const gasPrice = await getGasPrice(chainId);
     

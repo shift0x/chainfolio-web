@@ -21,7 +21,7 @@ const defaultContainerStyle = {
 }
 
 
-export default function AmountInput({ balances, asset, network, onAmountInChanged, containerSx = {}, inputSx = {} }){
+export default function AmountInput({ caption="Amount", checkForInsuffientInput=true, balances, asset, network, onAmountInChanged, containerSx = {}, inputSx = {} }){
     const [selectedAssetBalance, setSelectedAssetBalance] = useState(0);
     const [inputAmountIn, setInputAmountIn] = useState("");
     const [amountInError, setAmountInError] = useState(null);
@@ -51,7 +51,7 @@ export default function AmountInput({ balances, asset, network, onAmountInChange
 
         if(isNaN(amount)){
             error = "invalid input amount";
-        } else if(amount > selectedAssetBalance){
+        } else if(amount > selectedAssetBalance && checkForInsuffientInput){
             error = "amount exceeds balance";
         } else if(amount < 0){
             error = "amount must be > 0"
@@ -71,7 +71,7 @@ export default function AmountInput({ balances, asset, network, onAmountInChange
             ...defaultContainerStyle,
             ...containerSx
         }}>
-            <StyledCaption>Amount</StyledCaption>
+            <StyledCaption>{caption}</StyledCaption>
 
             <StyledInput error={amountInError != null} 
                 sx={inputSx} 

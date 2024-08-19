@@ -1,87 +1,104 @@
 import PropTypes from 'prop-types';
-import { Button, Stack, Typography } from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import StyledTable from '../../components/StyledTable';
+import { useUserAccount } from '../../providers/UserAccountProvider';
+import { useEffect, useState } from 'react';
+import { useNetworks } from '../../providers/NetworksProvider';
+import NetworkWithIcon from '../../components/NetworkWithIcon';
+import NetworkSelector from '../../components/NetworkSelector';
+import { formatNumber } from '../../lib/format';
 
 const actionButtonStyle = {
     padding: "3px 10px"
 }
 
 function PortfolioHoldings({ renderModal }){
+    const [ rows, setRows ] = useState([]);
+    const [ selectedNetwork, setSelectedNetwork ] = useState(null);
 
-    function createHeading(name, id){
-        return { name, id }
+    const { userAccountBalances } = useUserAccount();
+    const { getNetworkTokenByChainId } = useNetworks();
+
+    function createHeading(name, id, content){
+        return { name, id, content }
     }
 
-    function createRow(token){
+    function createRow(record){
+        const token = getNetworkTokenByChainId(record.chainId, record.asset);
+
         return {
             asset: ( 
                 <Stack direction="row" spacing={1}>
-                    <img src={token.img} height="25px" width="25px" />
+                    <img src={token.image} height="25px" width="25px" />
                     <Typography variant='body1'>{token.name}</Typography>
                 </Stack>
             ),
             symbol: (
-                <Typography variant='body1'>{token.symbol}</Typography>
+                <Typography variant='body1' sx={{ 
+                    textTransform: "uppercase"
+                }}>{token.symbol}</Typography>
             ),
             chain: (
-                <Stack direction="row" spacing={1}>
-                    <img src={token.chain.img} height="25px" width="25px" />
-                    <Typography variant='body1'>{token.chain.name}</Typography>
-                </Stack>
+                <NetworkWithIcon network={token.chain} />
             ),
             balance: (
-                <Typography variant='body1'>{token.balance}</Typography>
-            ),
-            value: (
-                <Typography variant='body1'>{token.value}</Typography>
+                <Typography variant='body1'>{formatNumber(record.balance)}</Typography>
             ),
             actions: (
                 <Stack direction="row" spacing={1}>
-                    <Button variant='outlined' sx={actionButtonStyle} onClick={() => { renderModal("swap") }} >swap</Button>
-                    <Button variant='outlined' sx={actionButtonStyle} onClick={() => { renderModal("transfer") }}>transfer</Button>
-                    <Button variant='outlined' sx={actionButtonStyle} onClick={() => { renderModal("withdraw") }}>withdraw</Button>
+                    <Button variant='outlined' sx={actionButtonStyle} onClick={() => { renderModal("transfer") }} disabled={record.asset == 'native'}>Transfer</Button>
+                    <Button variant='outlined' sx={actionButtonStyle} onClick={() => { renderModal("withdraw") }} disabled={record.asset == 'native'}>Withdraw</Button>
                 </Stack>
             )
         }
     }
+
+    const networkSelector = <Box sx={{
+        display: "inline-flex"
+    }}>
+        <NetworkSelector showLabel={false} onNetworkChanged={setSelectedNetwork} 
+            sx={{ width: "250px" }}
+            selectSx={{backgroundColor: "#fcfcfc"}} />
+    </Box>
 
     const headings = [
         createHeading("Asset", "asset"),
         createHeading("Symbol", "symbol"),
         createHeading("Chain", "chain"),
         createHeading("Balance", "balance"),
-        createHeading("Value (USD)", "value"),
-        createHeading("", "actions")
+
+        
+        createHeading("", "actions", networkSelector)
     ]
 
-    const rows = [
-        { 
-            img: "https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694",
-            name: "Circle USDC",
-            symbol: "USDC",
-            balance: 20,
-            value: 20,
-            chain: {
-                img: "https://coin-images.coingecko.com/coins/images/16547/large/photo_2023-03-29_21.47.00.jpeg?1696516109",
-                name: "Arbitrum Sepolia"
-            }
-        },
-        { 
-            img: "https://assets.coingecko.com/coins/images/279/standard/ethereum.png",
-            name: "Wrapped Ether",
-            symbol: "WETH",
-            balance: 1,
-            value: 2700,
-            chain: {
-                img: "https://assets.coingecko.com/coins/images/279/standard/ethereum.png",
-                name: "Sepolia"
-            }
-        }
-    ].map(row => { return createRow(row) });
+    useEffect(() => {
+        if(!selectedNetwork){ return; }
 
+        const chains = Object.keys(userAccountBalances);
+        const balancesByChain = chains
+        .filter(chainId => { return chainId.toString() == selectedNetwork.chainId.toString() })
+        .map(chainId => {
+            const assets = Object.keys(userAccountBalances[chainId]);
+            const balancesByAsset = assets.map(asset => {
+                return {
+                    chainId: chainId,
+                    asset: asset,
+                    balance: userAccountBalances[chainId][asset]
+                }
+            })
+
+            return balancesByAsset
+        }).flat();
+
+        const data = balancesByChain.map(balance => { return createRow(balance) });
+
+        setRows(data);
+    }, [selectedNetwork, userAccountBalances])
+
+    
     return (
         <>
-            <StyledTable headings={headings} rows={rows} />
+            <StyledTable headings={headings} rows={rows} justifyContent='flex-end' />
         </>
     )
 }

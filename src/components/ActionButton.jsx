@@ -2,12 +2,6 @@ import { Button, CircularProgress } from "@mui/material";
 import { useState } from "react";
 import { useTransactionQueue } from "../providers/TransactionQueueProvider";
 
-export function EnqueueTransactionButton({...props}){
-    return (
-        <ActionButton content="Enqueue Transaction" {...props} />
-    )
-}
-
 export function ActionButton({ content, active, onAction, onActionCompleted, sx={}, ...props }){
     const [isProcessingAction, setIsProcessingAction] = useState(false)
     const { addQueuedTransaction } = useTransactionQueue()
@@ -21,12 +15,15 @@ export function ActionButton({ content, active, onAction, onActionCompleted, sx=
 
             setTimeout(() => {
                 addQueuedTransaction(tx);
-                onActionCompleted();
-            }, 1500)
+
+                if(onActionCompleted){
+                    onActionCompleted();
+                }
+                
+                setIsProcessingAction(false);    
+            }, 750)
         } catch(err){
             setIsProcessingAction(false);
-
-            alert(err);
         }
     }
 

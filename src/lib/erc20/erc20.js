@@ -1,6 +1,7 @@
 import { getRPC } from "../chain/rpc";
 import { callContract, makeCalldata } from '../chain/contract';
 import erc20 from './abi.json';
+import { numberFromBig } from "../chain/numbers";
 
 const erc20TokenDecimalCache = {}
 
@@ -19,11 +20,19 @@ export async function getERC20TokenDecimals(chainId, address){
     return result[0];
 }
 
+export async function getERC20TokenAllowance(chainId, owner, spender, token, decimals){
+    const rpc = getRPC(chainId);
+    const result = (await callContract(rpc, erc20, token, "allowance", owner, spender))[0]
+    const allowance = numberFromBig(result, decimals);
+    
+    return allowance;
+}
+
 export async function transferERC20Token(to, amountBig){
     return makeCalldata(erc20, "transfer", to, amountBig);
 }
 
-export async function approveERC20TokenCalldata(spender, cap){
+export async function makeERC20TokenApproveCalldata(spender, cap){
     if(!cap)
         cap = "115792089237316195423570985008687907853269984665640564039457584007913129639935"
     

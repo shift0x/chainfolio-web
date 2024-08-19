@@ -2,17 +2,19 @@ import { StyledCaption } from "./StyledCaption";
 import { Box, Typography } from "@mui/material";
 
 const defaultBoxStyles = {
-    marginTop: 2
+    marginTop: 2,
+    height: "25px"
 }
 
 const defaultTypographyStyles = {
     textAlign: "right",
     backgroundColor: "hsla(220, 35%, 94%, 0.4)",
     border: "1px solid hsla(220, 25%, 80%, 0.8)",
-    padding: "10px",
+    padding: "8px",
     borderRadius: 1,
     color: "#444",
-    display: "block"
+    display: "block",
+    marginTop: "4px"
 }
 
 export default function ReadonlyInput({ label, content, containerSx = {}, bodySx = {} }){
@@ -26,7 +28,7 @@ export default function ReadonlyInput({ label, content, containerSx = {}, bodySx
             <Typography variant="body2" sx={{
                 ...defaultTypographyStyles,
                 ...bodySx
-            }}>{content}</Typography>
+            }}>{content ?? <>&nbsp;</>}</Typography>
         </Box>
     )
 }

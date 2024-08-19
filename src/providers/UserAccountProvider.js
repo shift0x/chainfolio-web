@@ -2,10 +2,9 @@ import { createContext, useContext, useEffect, useState } from "react"
 import { useAccountManager } from "../lib/account-manager/accountManager";
 import { useConnectedAddress } from "./ConnectedAddressProvider";
 import { getAccountBalances } from "../lib/reader/address";
-import { getNetworks } from "../lib/networks/networks";
+import { useNetworks } from "./NetworksProvider";
 
 const UserAccountContext = createContext(null);
-const networks = getNetworks()
 
 export const useUserAccount = () => {
     const context = useContext(UserAccountContext);
@@ -13,11 +12,12 @@ export const useUserAccount = () => {
     return context
 }
 
-
 export const UserAccountProvider = ({children}) => {
     const [userAccount, setUserAccount] = useState(null);
     const [userAccountBalances, setUserAccountBalances] = useState(null);
     const { connectedAddress } = useConnectedAddress();
+    const { networks } = useNetworks();
+
     const accountManager = useAccountManager();
 
     const updateUserAccount = async () => {

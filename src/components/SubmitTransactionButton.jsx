@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-import { Button, CircularProgress } from "@mui/material";
+import { Button, CircularProgress, Divider } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSigner, useSwitchChain } from '@thirdweb-dev/react';
 
@@ -10,7 +10,7 @@ const TransactionStatus = {
     "AwaitingConfirmation": "Awaiting Confirmation"
 }
 
-function SubmitTransactionButton({network, disabled, label, onSubmitTransaction, callback, waitForConfirmation, sx={}, ...props}){
+function SubmitTransactionButton({network, disabled, label, onSubmitTransaction, callback, waitForConfirmation, showDivider=true, sx={}, ...props}){
     const [ transactionStatus, setTransactionStatus ] = useState(TransactionStatus.NA);
     const [ pendingOperation, setPendingOperation ] = useState(false);
 
@@ -59,18 +59,27 @@ function SubmitTransactionButton({network, disabled, label, onSubmitTransaction,
 
 
     return (
-        <Button variant="contained" 
-            onClick={handleClick}
-            disabled={!active} 
-            sx={{
-                width: "100%",
-                ...sx
-            }} 
-            color={ active ? "primary" : "info"} 
-            {...props}
-        >
+        <>
+            <Divider sx={{
+                display: showDivider ? "block" : "none",
+                mt:2
+            }} />
+
+            <Button variant="contained" 
+                onClick={handleClick}
+                disabled={!active} 
+                sx={{
+                    width: "100%",
+                    mt: 2,
+                    ...sx
+                }} 
+                color={ active ? "primary" : "info"} 
+                {...props}
+            >
                 {getButtonContent()}
             </Button>
+        </>
+        
     )
 }
 

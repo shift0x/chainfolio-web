@@ -30,26 +30,32 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-function StyledTable({ headings, rows }){
+function StyledTable({ headings, rows, showHeadings=true, elevate=true, justifyContent="flex-start" }){
 
     return (
-        <TableContainer component={Paper} sx={{borderRadius: 1}}>
-            <Table sx={{ minWidth: 700 }} aria-label="customized table">
-                <TableHead>
-                    <TableRow>
+        <TableContainer component={elevate ? Paper : null} sx={{
+                borderRadius: 1
+            }}>
+            <Table aria-label="customized table">
+                <TableHead sx={{ display: showHeadings ? "table-header-group": "none"}}>
+                    <TableRow key="header">
                         { headings.map((heading, index) => (
-                            <StyledTableCell align={ index == 0 ? "left" : "right"}>{heading.name}</StyledTableCell>
+                            <StyledTableCell 
+                                align={ index == 0 ? "left" : "right"} 
+                                key={heading.name}>
+                                    {heading.content ?? heading.name}
+                            </StyledTableCell>
                         ))}
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rows.map(row => (
-                        <StyledTableRow key={row.name}>
+                    {rows.map((row, index) => (
+                        <StyledTableRow key={index}>
                             { headings.map((heading, index) => (
-                                <StyledTableCell>
+                                <StyledTableCell key={`${row.name}_${heading.id}`}>
                                     <Box sx={{ 
                                         display: 'flex', 
-                                        justifyContent: index == 0 ? 'flex-start' : 'flex-end' }}
+                                        justifyContent: index == 0 ? 'flex-start' : {justifyContent} }}
                                     >
                                         {row[heading.id]}
                                     </Box>

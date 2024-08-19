@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { getRPC } from "./rpc";
 
-export async function sendTransaction(signer, to, data, value){
+export async function createTransaction(signer, to, data, value, includeGasLimit){
     const tx = { to }
 
     if(data)
@@ -10,9 +10,17 @@ export async function sendTransaction(signer, to, data, value){
     if(value)
         tx.value = value;
 
-    const estimatedGas = await signer.estimateGas(tx);
+    if(includeGasLimit){
+        const gasLimit = await signer.estimateGas(tx);
 
-    tx.gasLimit = estimatedGas.mul(2);
+        tx.gasLimit = gasLimit.mul(2);
+    } 
+
+    return tx;
+}
+
+export async function sendTransaction(signer, to, data, value){
+    const tx = await createTransaction(signer, to, data, value, true);
 
     return await signer.sendTransaction(tx);
 }

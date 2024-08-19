@@ -1,10 +1,9 @@
 import { useAddress } from "@thirdweb-dev/react";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { getNetworks } from "../lib/networks/networks";
 import { getAccountBalances } from "../lib/reader/address";
+import { useNetworks } from "./NetworksProvider";
 
 const ConnectedAddressContext = createContext(null);
-const networks = getNetworks()
 
 export const useConnectedAddress = () => {
     const context = useContext(ConnectedAddressContext);
@@ -14,6 +13,7 @@ export const useConnectedAddress = () => {
 
 export const ConnectedAddressProvider = ({children}) => {
     const [connectedAddressBalances, setConnectedAddressBalances] = useState(null);
+    const { networks } = useNetworks();
 
     const connectedUserAddress = useAddress();
     

@@ -1,7 +1,9 @@
 import { utils } from 'ethers'
 
 export function numberToBig(amount, decimals) {
-    return utils.parseUnits(amount.toString(), decimals).toString();
+    const fixedAmount = Number(amount).toFixed(decimals);
+
+    return utils.parseUnits(fixedAmount, decimals).toString();
 }
 
 export function numberFromBig(amount, decimals){

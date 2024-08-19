@@ -15,7 +15,7 @@ export default function DepositActionButton({variant="extended", size="medium", 
                 ...defaultFloatingActionButtonStyle,
                 ...sx
             }} {...props}>
-            <AccountBalanceIcon /> &nbsp; Deposit
+            <AccountBalanceIcon sx={{ fontSize: '17px'}} /> &nbsp; Deposit
         </StyledFab>
     )
 }

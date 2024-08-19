@@ -6,28 +6,35 @@ import AssetSelector from "../../components/AssetSelector";
 import AmountInput from "../../components/AmountInput";
 import NetworkSelector from "../../components/NetworkSelector";
 import EvmAddressInput from "../../components/EvmAddressInput";
-import { EnqueueTransactionButton } from "../../components/ActionButton";
 import { useUserAccount } from "../../providers/UserAccountProvider";
 import { transferERC20Token } from "../../lib/erc20/erc20";
+import { formatNumber } from "../../lib/format";
+import { shortenAddress } from "@thirdweb-dev/react";
+import { EnqueueTransactionButton } from "../transaction-bundler/EnqueueTransactionButton";
 
 export default function TransferAction({ account, onNewTransaction, onActionCompleted }){
     const [selectedNetwork, setSelectedNetwork] = useState(null);
     const [selectedAsset, setSelectedAsset] = useState(null);
-    const [destinationAddress, setDestinationAddress] = useState(null);
+    const [destinationAddress, setDestinationAddress] = useState("");
     const [amountIn, setAmountIn] = useState(0);
     const { userAccountBalances } = useUserAccount();
     
     const canSubmit = selectedNetwork != null && selectedAsset != null && amountIn != null && destinationAddress != null;
 
     async function makeTransaction(){
-        const calldata = await transferERC20Token(selectedAsset.address, numberToBig(amountIn, selectedAsset.decimals));
+        const calldata = await transferERC20Token(destinationAddress, numberToBig(amountIn, selectedAsset.decimals));
+        const label = `transfer ${formatNumber(amountIn)} ${selectedAsset.symbol.toUpperCase()} to ${ shortenAddress(destinationAddress, false) }`
 
         return {
-            to: destinationAddress,
-            data: calldata,
-            gasLimit: 100000,
-            value: 0,
-            chainId: selectedNetwork.chainId.toString()
+            label: label,
+            network: selectedNetwork,
+            params: {
+                to: selectedAsset.address,
+                data: calldata,
+                gasLimit: 100000,
+                value: 0,
+                chainId: selectedNetwork.chainId.toString()
+            }
         }
     }
 
@@ -40,6 +47,7 @@ export default function TransferAction({ account, onNewTransaction, onActionComp
 
                 <AssetSelector 
                     sx={{flex: 1}}
+                    selectSx={{marginTop: "0px"}}
                     network={selectedNetwork} 
                     onSelectedAssetChanged={setSelectedAsset} />
             </Stack>
@@ -49,6 +57,7 @@ export default function TransferAction({ account, onNewTransaction, onActionComp
                 label="From (Managed Wallet)" />
 
             <EvmAddressInput label="To"
+                containerSx={{marginTop: 6}}
                 onAddressChanged={setDestinationAddress} />
 
             <AmountInput
@@ -58,11 +67,12 @@ export default function TransferAction({ account, onNewTransaction, onActionComp
                 onAmountInChanged={setAmountIn} />
 
             <EnqueueTransactionButton
-                sx={{marginTop: 6}}
                 onAction={makeTransaction} 
                 onActionCompleted={onActionCompleted}
                 active={canSubmit}
             />
+
+           
 
         </>
     )

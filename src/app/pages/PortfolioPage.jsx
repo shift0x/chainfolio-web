@@ -1,10 +1,10 @@
 import { Box, Button, Grid, Dialog, Typography, DialogTitle } from '@mui/material';
 import { useState } from 'react';
 import PortfolioHoldings from '../../features/portfolio-holdings/PortfolioHoldings';
+import Swap from '../../features/swap/Swap';
 import { useConnectionStatus } from '@thirdweb-dev/react';
 import Web3WalletConnection from '../../features/web3-wallet-connection/Web3WalletConnection';
 import CreateNewAccount from '../../features/create-account/CreateNewAccount';
-import SwapInitiator from '../../features/swap-action/SwapInitiator';
 import TransferAction from '../../features/transfer-action/TransferAction';
 import WithdrawAction from '../../features/withdraw-action/WithdrawAction';
 import DepositAction from '../../features/deposit-action/DepositAction';
@@ -16,6 +16,7 @@ import SubmitTransactionsAction from '../../features/transaction-bundler/SubmitT
 
 const headings = [
     { id: "holdings", name: "Holdings" },
+    { id: "swap", name: "Swap" },
     { id: "earn", name: "Earn" },
     { id: "borrowAndLend", name: "Borrow / Lend" },
 ]
@@ -63,10 +64,10 @@ export default function PortfolioPage(){
     }
 
     async function updateBalancesAndClose(){
+        closeModal()
+
         await updateConnectedAddressBalances();
         await updateUserAccount();
-
-        closeModal()
     }
 
     function closeModal(){
@@ -75,8 +76,6 @@ export default function PortfolioPage(){
 
     function getActiveModal(){
         switch(activeModalContent) {
-            case "swap":
-                return <SwapInitiator />
             case "transfer":
                 return <TransferAction account={userAccount} onActionCompleted={closeModal} />
             case "withdraw":
@@ -100,6 +99,8 @@ export default function PortfolioPage(){
         switch(selectedHeading){
             case "holdings":
                 return <PortfolioHoldings renderModal={renderModalContent} />
+            case "swap":
+                return <Swap />
             default:
                 return <></>
         }
@@ -107,12 +108,13 @@ export default function PortfolioPage(){
 
     return (
         <>
-            <Grid sx={{
+            <Grid key="sub-navigation" sx={{
                 display: "flex",
                 flexDirection: "row",
             }}>
                 { headings.map(heading => (
                     <Typography 
+                        key={heading.id}
                         variant="h3" 
                         sx={headingStyle(selectedHeading==heading.id)}
                         onClick={ () => { setSelectedHeading(heading.id)}}
@@ -139,11 +141,11 @@ export default function PortfolioPage(){
                 
                 }
             </Grid>
-            <Box sx={{ mt: 4 }}>
+            <Box key="content" sx={{ mt: 4 }}>
                 { getContent() }
             </Box>
 
-            <Dialog open={isModalActive} onClose={ () => { setIsModalActive(false)}}>
+            <Dialog key="dialog" open={isModalActive} onClose={ () => { setIsModalActive(false)}}>
                 <Box sx={{ 
                     minWidth: "400px",
                     backgroundColor: "#f5f5f5"
@@ -157,7 +159,7 @@ export default function PortfolioPage(){
                         }}>{activeModalContent}</Typography>
                     </DialogTitle>
 
-                    <Box sx={{ backgroundColor: "#fff", padding: 2, minHeight: "300px", pb: 4 }}>
+                    <Box sx={{ backgroundColor: "#fff", padding: 2, pb: 4 }}>
                         { getActiveModal() }
 
                         <Button variant="outlined" sx={{width: "100%", marginTop: 2}} onClick={closeModal}>Close</Button>
