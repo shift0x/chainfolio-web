@@ -1,7 +1,7 @@
 import { useTransactionQueue } from "../../providers/TransactionQueueProvider";
 import NetworkWithIcon from "../../components/NetworkWithIcon";
 import StyledTable from "../../components/StyledTable";
-import { Box, Button, Link, Skeleton, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Link, Skeleton, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import SubmitTransactionButton from "../../components/SubmitTransactionButton";
 import { useNetworks } from "../../providers/NetworksProvider";
@@ -10,9 +10,10 @@ import { numberFromBig, numberToBig } from "../../lib/chain/numbers";
 import { useUserAccount } from "../../providers/UserAccountProvider";
 import WarningIcon from '@mui/icons-material/Warning';
 import { useSendTransaction } from "../../providers/SendTransactionProvider";
-import { createTransaction } from "../../lib/chain/transaction";
+import { createTransaction, watchForCompletedTransactions } from "../../lib/chain/transaction";
 import { useSigner } from "@thirdweb-dev/react";
 import { useAccountManager } from "../../lib/account-manager/accountManager";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 const flexbox = {
     display: "flex",
@@ -35,9 +36,10 @@ export default function SubmitTransactionsAction({ onActionCompleted }){
     const { defaultNetwork } = useNetworks();
     const { sendTransactionFromChain } = useSendTransaction();
     
-
+    const [ expectedNonceByNetwork, setExpectedNonceByNetwork ] = useState(null)
     const [ networkTransactionSummary, setNetworkTransactionSummary ] = useState([]);
     const [ isPricingTransactions, setIsPricingTransactions ] = useState(false);
+    const [ networkConfirmationStatus, setNetworkConfirmationStatus ] = useState([]);
 
     const accountManager = useAccountManager();
     const signer = useSigner();
@@ -47,6 +49,19 @@ export default function SubmitTransactionsAction({ onActionCompleted }){
     const headings = [
         { name: "note", id: "note"}
     ];
+
+    const getNetworkStatusContent = (chainId) => {
+        const network = networkConfirmationStatus.find(network => { return network.chainId.toString() == chainId.toString()})
+
+        if(!network){
+            return <></>
+        }
+
+        return network.status == "pending" ?
+            <CircularProgress size="14px" sx={{ml: 1}} /> 
+            :
+            <CheckCircleIcon fontSize="14px" color="success" sx={{ml: 1}} />
+    }
 
     const createTransactionModel = (tx) => {
         return {
@@ -92,21 +107,56 @@ export default function SubmitTransactionsAction({ onActionCompleted }){
         setIsPricingTransactions(false);
     }
 
+    const updateNetworkTransactions = async () => {
+        if(!expectedNonceByNetwork){
+            return
+        }
+
+        const pendingNetworkTransactions = Object.keys(expectedNonceByNetwork)
+            .map(chainId => {
+                return { chainId: chainId, nonce: expectedNonceByNetwork[chainId]}
+            })
+
+        watchForCompletedTransactions(pendingNetworkTransactions, userAccount.eoa, setNetworkConfirmationStatus);
+    }
+
     useEffect(() => {
         setIsPricingTransactions(true);
         setTimeout(() => { updateModels() }, 1000)
 
     }, [userAccountBalances, queuedTransactions])
 
+    useEffect(() => {
+        updateNetworkTransactions()
+    }, [expectedNonceByNetwork])
+
+    useEffect(() => {
+        if(networkConfirmationStatus.length == 0){ return ; }
+
+        const pendings = networkConfirmationStatus.filter(x => { return x.status == "pending"}).length;
+
+        if(pendings > 0) { return }
+
+        setTimeout(() => {
+            clearTransactionQueue()
+            onActionCompleted()
+        }, 1500)
+
+    }, [networkConfirmationStatus])
 
     const submitUserAccountTransactions = async () => {
         let transactionParams = [];
+        let nonceByNetwork = {}
         
         for(var i = 0; i < networkTransactionSummary.length; i++){
             const network = networkTransactionSummary[i];
             const nonce = await getNonce(network.chainId, userAccount.eoa);
 
             const networkTxs = network.transactions.map((tx, index) => {
+                const txNonce = nonce + index;
+
+                nonceByNetwork[network.chainId] = txNonce + 1;
+
                 return {
                     to: tx.params.to,
                     data: tx.params.data,
@@ -115,23 +165,22 @@ export default function SubmitTransactionsAction({ onActionCompleted }){
                     value: numberToBig(tx.params.value ?? 0, 18),
                     chainId: network.chainId.toString(),
                     zrWalletIndex: userAccount.zrWalletIndex,
-                    nonce: nonce + index,
+                    nonce: txNonce,
                     eoa: userAccount.eoa
                 }
+                
             });
 
             transactionParams = transactionParams.concat(networkTxs);
             
         }
 
-        console.log({transactionParams});
+        setExpectedNonceByNetwork(nonceByNetwork);
 
-       return accountManager.executeTransactions(signer, transactionParams, userAccount);
+        return accountManager.executeTransactions(signer, transactionParams, userAccount);
     }
 
-    const onTransactionSubmitted = async () => {
-
-    }
+    const onTransactionSubmitted = async () => { }
 
     const topUpGas = async (model) => {
         const topUpAmount = model.fee;
@@ -150,6 +199,8 @@ export default function SubmitTransactionsAction({ onActionCompleted }){
         clearTransactionQueue();
         onActionCompleted();
     }
+
+    
 
     return (
         <>
@@ -176,6 +227,8 @@ export default function SubmitTransactionsAction({ onActionCompleted }){
                                 mb: 1
                             }}>
                                 <NetworkWithIcon height="20px" width="20px" network={network.network} sx={baseTypography}  />
+
+                                {getNetworkStatusContent(network.chainId)}
 
                                 <Box sx={{
                                     ...flexbox,
