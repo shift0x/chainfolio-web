@@ -24,7 +24,7 @@ function SubmitTransactionButton({network, disabled, label, onSubmitTransaction,
         setTransactionStatus(TransactionStatus.AwaitingConfirmation);
         setPendingOperation(false);
 
-        if(waitForConfirmation)
+        if(waitForConfirmation && tx)
             await tx.wait();
 
         setTimeout(() => {

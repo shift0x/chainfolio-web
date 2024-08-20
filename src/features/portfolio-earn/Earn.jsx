@@ -114,7 +114,8 @@ export default function Earn({renderModal}){
 
     useEffect(() => {
         updateLiquidityPoolData();
-    }, [networks])
+    }, [networks, userAccount])
+
     function createHeading(name, id, content){
         return { name, id, content }
     }
@@ -127,8 +128,6 @@ export default function Earn({renderModal}){
     ]
 
     const containerWidth = "800px"
-
-    console.log({allLiquidityPools});
 
     return (
         <Box>

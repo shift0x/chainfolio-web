@@ -28,7 +28,7 @@ export default function Hero() {
               display: 'flex',
               flexDirection: { xs: 'column', sm: 'row' },
               alignItems: 'center',
-              fontSize: '3.5rem',
+              fontSize: '4.2rem',
               fontFamily: "Poppins",
               fontWeight: 600,
             }}
@@ -40,7 +40,7 @@ export default function Hero() {
             sx={{
                 fontFamily: "Poppins",
                 textAlign: "center",
-                fontSize: "1.2em",
+                fontSize: "1.3em",
                 color: "#666",
                 lineHeight: 1.6
             }}

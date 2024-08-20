@@ -49,18 +49,20 @@ async function createAccount(signer, owner, data){
 
     const tx = await sendTransaction(signer, accountManagerAddress, calldata);
 
-    return tx.wait();
+    return tx ? tx.wait() : null;
 }
 
 async function executeTransactions(signer, txs, userAccount){
     for(var i = 0; i < txs.length; i++){
 
         console.log({tx: txs[i]});
-        
+
         const calldata = makeCalldata(accountManagerAbi, "execute", [txs[i]]);
         const tx = await sendTransaction(signer, accountManagerAddress, calldata);
 
-        await tx.wait();
+        if(tx){
+            await tx.wait();
+        }
     }
 }
 
