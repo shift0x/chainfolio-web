@@ -38,7 +38,7 @@ export async function callContractWithStateOverride(rpc, abi, address, method, s
 
     const result = iface.decodeFunctionResult(fragment, rawResult);
 
-    return result[0];
+    return result;
 }
 
 export async function estimateGas(rpc, abi, address, method, ...args) {

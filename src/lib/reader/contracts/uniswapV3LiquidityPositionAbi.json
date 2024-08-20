@@ -1,0 +1,136 @@
+[
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "internalType": "address[]",
+          "name": "pools",
+          "type": "address[]"
+        },
+        {
+          "internalType": "contract INonfungiblePositionManager",
+          "name": "positionManager",
+          "type": "address"
+        }
+      ],
+      "name": "getLiquidityPoolsWithPositions",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "Address",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "Token0",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "Token1",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "Fee",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct LiquidityPool[]",
+          "name": "liquidityPools",
+          "type": "tuple[]"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "PositionId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "LiquidityPool",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "Token0",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "Token1",
+              "type": "address"
+            },
+            {
+              "internalType": "bool",
+              "name": "Active",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct LiquidityPosition[]",
+          "name": "liquidityPositions",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "internalType": "contract INonfungiblePositionManager",
+          "name": "positionManager",
+          "type": "address"
+        }
+      ],
+      "name": "getLiquidityPositions",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "PositionId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "LiquidityPool",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "Token0",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "Token1",
+              "type": "address"
+            },
+            {
+              "internalType": "bool",
+              "name": "Active",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct LiquidityPosition[]",
+          "name": "positions",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]

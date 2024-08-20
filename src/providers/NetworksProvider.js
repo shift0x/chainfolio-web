@@ -39,6 +39,7 @@ export const NetworksProvider = ({children}) => {
         return { ...asset, chain: network}
     }
 
+
     const value = {
         networks,
         getNetworkByChainId,

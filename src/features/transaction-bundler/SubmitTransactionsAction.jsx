@@ -14,6 +14,7 @@ import { createTransaction, watchForCompletedTransactions } from "../../lib/chai
 import { useSigner } from "@thirdweb-dev/react";
 import { useAccountManager } from "../../lib/account-manager/accountManager";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { useConnectedAddress } from "../../providers/ConnectedAddressProvider";
 
 const flexbox = {
     display: "flex",
@@ -33,6 +34,7 @@ const txLabelTypographyStyle = {
 export default function SubmitTransactionsAction({ onActionCompleted }){
     const { queuedTransactions, clearTransactionQueue } = useTransactionQueue()
     const { userAccount, userAccountBalances, updateUserAccount } = useUserAccount();
+    const { connectedAddressBalances } = useConnectedAddress();
     const { defaultNetwork } = useNetworks();
     const { sendTransactionFromChain } = useSendTransaction();
     
@@ -91,6 +93,7 @@ export default function SubmitTransactionsAction({ onActionCompleted }){
 
                 entry.gasPrice = numberFromBig(gasPriceAsBig, 18);
                 entry.userAccountNativeBalance = userAccountBalances != null ? userAccountBalances[tx.network.chainId].native : 0;
+                entry.connectedAccountNativeBalance = connectedAddressBalances != null ? connectedAddressBalances[tx.network.chainId].native : 0;
             }
 
             entry.gasLimit += tx.params.gasLimit;
@@ -184,8 +187,16 @@ export default function SubmitTransactionsAction({ onActionCompleted }){
 
     const topUpGas = async (model) => {
         const topUpAmount = model.fee;
-        const topUpAmountBig = numberToBig(topUpAmount, 18);
 
+        if(model.connectedAccountNativeBalance < topUpAmount){
+            alert("connected account has insufficent funds to top up gas in managed account");
+
+            return
+        }
+
+        console.log({model});
+
+        const topUpAmountBig = numberToBig(topUpAmount, 18);
         const tx = await createTransaction(signer, userAccount.eoa, "0x", topUpAmountBig, true);
 
         const callback = async (response) => {

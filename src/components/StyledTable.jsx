@@ -30,18 +30,20 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-function StyledTable({ headings, rows, showHeadings=true, elevate=true, justifyContent="flex-start" }){
+function StyledTable({ headings, rows, showHeadings=true, elevate=true, justifyContent="flex-start", sx={} }){
+    const alignment = justifyContent == "flex-start" ? "left" : "right";
 
     return (
         <TableContainer component={elevate ? Paper : null} sx={{
-                borderRadius: 1
+                borderRadius: 1,
+                ...sx
             }}>
             <Table aria-label="customized table">
                 <TableHead sx={{ display: showHeadings ? "table-header-group": "none"}}>
                     <TableRow key="header">
                         { headings.map((heading, index) => (
                             <StyledTableCell 
-                                align={ index == 0 ? "left" : "right"} 
+                                align={ index == 0 ? "left" : alignment}
                                 key={heading.name}>
                                     {heading.content ?? heading.name}
                             </StyledTableCell>

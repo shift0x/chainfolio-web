@@ -110,7 +110,14 @@
         ],
         "exchanges": [
             {
+                "name": "Uniswap V3",
                 "type": "uniswap-v3",
+                "pools": [
+                    "0xdd7cc9a0da070fb8b60dc6680b596133fb4a7100",
+                    "0x1c9d93e574be622821398e3fe677e3a279f256f7",
+                    "0x3289680dd4d6c10bb19b899729cda5eef58aeff1",
+                    "0x1f358bd2b4EA422F7a75b9E20DEb32f4723E8aAB"
+                ],
                 "params": {
                     "router": "0x3bFA4769FB09eefC5a80d6E87c3B9C650f7Ae48E",
                     "factory": "0x0227628f3F023bb0B980b67D528571c95c6DaC1c",

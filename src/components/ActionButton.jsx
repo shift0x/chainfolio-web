@@ -24,6 +24,8 @@ export function ActionButton({ content, active, onAction, onActionCompleted, sx=
             }, 750)
         } catch(err){
             setIsProcessingAction(false);
+
+            console.log(err);
         }
     }
 

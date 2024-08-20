@@ -27,7 +27,9 @@ export async function getAccountBalances(networks, account){
     const responses = await Promise.all(calls);
     const balancesByNetworkLookup = {}
 
-    responses.forEach(network => {
+    responses.forEach(callResponse => {
+        const network = callResponse[0];
+        
         balancesByNetworkLookup[network.chainId.toString()] = { native: numberFromBig(network.nativeBalance, 18) }
 
         network.tokens.forEach(token => {

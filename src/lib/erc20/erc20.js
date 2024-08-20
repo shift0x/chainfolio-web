@@ -38,3 +38,29 @@ export async function makeERC20TokenApproveCalldata(spender, cap){
     
     return makeCalldata(erc20, "approve", spender, cap)
 }
+
+export async function ensureERC20Allowance(network, owner, spender, minAllowance, asset, label, onNewTransaction){
+    const allowance = await getERC20TokenAllowance(network.chainId, 
+        owner,
+        spender, 
+        asset.address, 
+        asset.decimals);
+
+    if(allowance < minAllowance){
+        const approveCalldata = await makeERC20TokenApproveCalldata(spender);
+        
+        onNewTransaction(
+            {
+                label: label,
+                network: network,
+                params: {
+                    to: asset.address,
+                    data: approveCalldata,
+                    gasLimit: 300000,
+                    value: 0,
+                    chainId: network.chainId.toString()
+                }
+            }
+        );
+    }
+}

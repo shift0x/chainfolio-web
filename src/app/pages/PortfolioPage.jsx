@@ -13,6 +13,8 @@ import { useConnectedAddress } from '../../providers/ConnectedAddressProvider';
 import TransactionsActionButton from '../../features/transaction-bundler/TransactionsActionButton';
 import DepositActionButton from '../../components/DepositActionButton';
 import SubmitTransactionsAction from '../../features/transaction-bundler/SubmitTransactionsAction';
+import Earn from '../../features/portfolio-earn/Earn';
+import EnterLiquidityPoolAction from '../../features/portfolio-earn/EnterLiquidityPoolAction';
 
 const headings = [
     { id: "holdings", name: "Holdings" },
@@ -58,8 +60,8 @@ export default function PortfolioPage(){
     
     const connectionStatus = useConnectionStatus();
 
-    function renderModalContent(content){
-        setActiveModalContent(content);
+    function renderModalContent(content, header, data){
+        setActiveModalContent({ content, header, data });
         setIsModalActive(true)
     }
 
@@ -75,15 +77,17 @@ export default function PortfolioPage(){
     }
 
     function getActiveModal(){
-        switch(activeModalContent) {
+        switch(activeModalContent.content) {
             case "transfer":
-                return <TransferAction account={userAccount} onActionCompleted={closeModal} />
+                return <TransferAction data={activeModalContent.data} account={userAccount} onActionCompleted={closeModal} />
             case "withdraw":
-                return <WithdrawAction account={userAccount} onActionCompleted={closeModal} />
+                return <WithdrawAction data={activeModalContent.data} account={userAccount} onActionCompleted={closeModal} />
             case "deposit":
-                return <DepositAction account={userAccount} onActionCompleted={updateBalancesAndClose} />
+                return <DepositAction data={activeModalContent.data} account={userAccount} onActionCompleted={updateBalancesAndClose} />
             case "transactions":
-                return <SubmitTransactionsAction onActionCompleted={updateBalancesAndClose} />
+                return <SubmitTransactionsAction data={activeModalContent.data} onActionCompleted={updateBalancesAndClose} />
+            case "enter-liquidity-pool":
+                return <EnterLiquidityPoolAction data={activeModalContent.data} onActionCompleted={closeModal} />
             default:
                 return null;
         }
@@ -101,8 +105,12 @@ export default function PortfolioPage(){
                 return <PortfolioHoldings renderModal={renderModalContent} />
             case "swap":
                 return <Swap />
+            case "earn":
+                return <Earn renderModal={renderModalContent} />
             default:
-                return <></>
+                return requiredActionContainer(
+                    <Typography sx={{textTransform: "uppercase", color: "#666", fontWeight: "bold"}}>...Coming Soon...</Typography>
+                )
         }
     }
 
@@ -141,7 +149,7 @@ export default function PortfolioPage(){
                 
                 }
             </Grid>
-            <Box key="content" sx={{ mt: 4 }}>
+            <Box key="content" sx={{ mt: 6 }}>
                 { getContent() }
             </Box>
 
@@ -150,20 +158,28 @@ export default function PortfolioPage(){
                     minWidth: "400px",
                     backgroundColor: "#f5f5f5"
                 }}>
-                    <DialogTitle>
-                        <Typography variant="h6" sx={{ 
-                            fontFamily: "Poppins",
-                            fontSize: "15px",
-                            textTransform: "uppercase",
-                            textAlign: "center"
-                        }}>{activeModalContent}</Typography>
-                    </DialogTitle>
+                    {
+                        activeModalContent != null ? 
+                            <>
+                                <DialogTitle variant='h6' sx={{ 
+                                        fontFamily: "Poppins",
+                                        fontSize: "15px",
+                                        textTransform: "uppercase",
+                                        textAlign: "center"
+                                    }}>
+                                    {activeModalContent.header ?? activeModalContent.content}
+                                </DialogTitle>
 
-                    <Box sx={{ backgroundColor: "#fff", padding: 2, pb: 4 }}>
-                        { getActiveModal() }
+                                <Box sx={{ backgroundColor: "#fff", padding: 2, pb: 4 }}>
+                                    { getActiveModal() }
 
-                        <Button variant="outlined" sx={{width: "100%", marginTop: 2}} onClick={closeModal}>Close</Button>
-                    </Box>
+                                    <Button variant="outlined" sx={{width: "100%", marginTop: 2}} onClick={closeModal}>Close</Button>
+                                </Box>
+                            </>
+                            :
+                            null
+                    }
+                    
                 </Box>
             </Dialog>
             

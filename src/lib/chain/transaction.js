@@ -22,7 +22,11 @@ export async function createTransaction(signer, to, data, value, includeGasLimit
 export async function sendTransaction(signer, to, data, value){
     const tx = await createTransaction(signer, to, data, value, true);
 
-    return await signer.sendTransaction(tx);
+    try {
+        return await signer.sendTransaction(tx);
+    } catch (err) {
+        alert(err.message);
+    }
 }
 
 export async function waitForTxReceipt(chainId, txHash) {

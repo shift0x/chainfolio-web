@@ -25,6 +25,8 @@ export const TransactionQueueProvider = ({children}) => {
     }, [connectedAddress])
 
     const addQueuedTransaction = (args) => {
+        if(!args){ return; }
+        
         let txs = [];
 
         if(!Array.isArray(args)) {
